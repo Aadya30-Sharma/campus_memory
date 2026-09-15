@@ -12,11 +12,12 @@ import OfficeHoursModal from "./OfficeHoursModal";
 import AlumniNetworkModal from "./AlumniNetworkModal";
 import ExplainNoticeModal from "./ExplainNoticeModal";
 import SerendipityModal from "./SerendipityModal";
+import LifecycleModal from "./LifecycleModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, Compass, MapPin, BookOpen, ShieldCheck, 
-  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator, GraduationCap, Briefcase, Shuffle 
+  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator, GraduationCap, Briefcase, Shuffle, Clock 
 } from "lucide-react";
 
 import { CAMPUS_ACTIVITIES } from "./data/campus-mock";
@@ -38,6 +39,7 @@ export default function CampusOS() {
   const [isAlumniModalOpen, setIsAlumniModalOpen] = useState(false);
   const [isExplainModalOpen, setIsExplainModalOpen] = useState(false);
   const [isSerendipityOpen, setIsSerendipityOpen] = useState(false);
+  const [isLifecycleOpen, setIsLifecycleOpen] = useState(false);
 
   // 1. All State Management
   const [selectedYear, setSelectedYear] = useState<Year>(1);
@@ -152,6 +154,15 @@ export default function CampusOS() {
           >
             <FileText className="w-3.5 h-3.5 text-indigo-400" />
             <span>Explain Notice</span>
+          </button>
+
+          {/* Lifecycle Manager Button */}
+          <button 
+            onClick={() => setIsLifecycleOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-cyan-500/30 text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
+          >
+            <Clock className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Lifecycle</span>
           </button>
 
           {/* Serendipity Button */}
@@ -532,6 +543,10 @@ export default function CampusOS() {
       <SerendipityModal 
         isOpen={isSerendipityOpen} 
         onClose={() => setIsSerendipityOpen(false)} 
+      />
+      <LifecycleModal 
+        isOpen={isLifecycleOpen} 
+        onClose={() => setIsLifecycleOpen(false)} 
       />
     </div>
   );
