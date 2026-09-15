@@ -13,11 +13,12 @@ import AlumniNetworkModal from "./AlumniNetworkModal";
 import ExplainNoticeModal from "./ExplainNoticeModal";
 import SerendipityModal from "./SerendipityModal";
 import LifecycleModal from "./LifecycleModal";
+import PersonalizationModal from "./PersonalizationModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, Compass, MapPin, BookOpen, ShieldCheck, 
-  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator, GraduationCap, Briefcase, Shuffle, Clock 
+  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator, GraduationCap, Briefcase, Shuffle, Clock, Sliders 
 } from "lucide-react";
 
 import { CAMPUS_ACTIVITIES } from "./data/campus-mock";
@@ -40,6 +41,7 @@ export default function CampusOS() {
   const [isExplainModalOpen, setIsExplainModalOpen] = useState(false);
   const [isSerendipityOpen, setIsSerendipityOpen] = useState(false);
   const [isLifecycleOpen, setIsLifecycleOpen] = useState(false);
+  const [isPersonalizationOpen, setIsPersonalizationOpen] = useState(false);
 
   // 1. All State Management
   const [selectedYear, setSelectedYear] = useState<Year>(1);
@@ -118,7 +120,7 @@ export default function CampusOS() {
               CAMPUS MEMORY
             </span>
             <span className="text-[10px] text-slate-500 ml-2 border border-white/10 px-1.5 py-0.5 rounded-full">
-              OS v2.10
+              OS v2.11
             </span>
           </div>
         </div>
@@ -147,6 +149,15 @@ export default function CampusOS() {
 
         {/* Right Nav Actions */}
         <div className="flex items-center gap-2 overflow-x-auto py-1">
+          {/* Preferences Button */}
+          <button 
+            onClick={() => setIsPersonalizationOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
+          >
+            <Sliders className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Preferences</span>
+          </button>
+
           {/* Explain Notice Button */}
           <button 
             onClick={() => setIsExplainModalOpen(true)}
@@ -547,6 +558,10 @@ export default function CampusOS() {
       <LifecycleModal 
         isOpen={isLifecycleOpen} 
         onClose={() => setIsLifecycleOpen(false)} 
+      />
+      <PersonalizationModal 
+        isOpen={isPersonalizationOpen} 
+        onClose={() => setIsPersonalizationOpen(false)} 
       />
     </div>
   );
