@@ -9,11 +9,13 @@ import SkillGapModal from "./SkillGapModal";
 import PeerMatchModal from "./PeerMatchModal";
 import GradePredictorModal from "./GradePredictorModal";
 import OfficeHoursModal from "./OfficeHoursModal";
+import AlumniNetworkModal from "./AlumniNetworkModal";
+import ExplainNoticeModal from "./ExplainNoticeModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, Compass, MapPin, BookOpen, ShieldCheck, 
-  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator, GraduationCap 
+  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator, GraduationCap, Briefcase 
 } from "lucide-react";
 
 import { CAMPUS_ACTIVITIES } from "./data/campus-mock";
@@ -32,6 +34,8 @@ export default function CampusOS() {
   const [isPeerMatchOpen, setIsPeerMatchOpen] = useState(false);
   const [isGradePredictorOpen, setIsGradePredictorOpen] = useState(false);
   const [isOfficeHoursOpen, setIsOfficeHoursOpen] = useState(false);
+  const [isAlumniModalOpen, setIsAlumniModalOpen] = useState(false);
+  const [isExplainModalOpen, setIsExplainModalOpen] = useState(false);
 
   // 1. All State Management
   const [selectedYear, setSelectedYear] = useState<Year>(1);
@@ -110,7 +114,7 @@ export default function CampusOS() {
               CAMPUS MEMORY
             </span>
             <span className="text-[10px] text-slate-500 ml-2 border border-white/10 px-1.5 py-0.5 rounded-full">
-              OS v2.8
+              OS v2.10
             </span>
           </div>
         </div>
@@ -139,6 +143,24 @@ export default function CampusOS() {
 
         {/* Right Nav Actions */}
         <div className="flex items-center gap-2">
+          {/* Explain Notice Button */}
+          <button 
+            onClick={() => setIsExplainModalOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <FileText className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Explain Notice</span>
+          </button>
+
+          {/* Alumni Radar Button */}
+          <button 
+            onClick={() => setIsAlumniModalOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <Briefcase className="w-3.5 h-3.5 text-purple-400" />
+            <span>Alumni Radar</span>
+          </button>
+
           {/* Office Hours Button */}
           <button 
             onClick={() => setIsOfficeHoursOpen(true)}
@@ -487,6 +509,14 @@ export default function CampusOS() {
       <OfficeHoursModal 
         isOpen={isOfficeHoursOpen} 
         onClose={() => setIsOfficeHoursOpen(false)} 
+      />
+      <AlumniNetworkModal 
+        isOpen={isAlumniModalOpen} 
+        onClose={() => setIsAlumniModalOpen(false)} 
+      />
+      <ExplainNoticeModal 
+        isOpen={isExplainModalOpen} 
+        onClose={() => setIsExplainModalOpen(false)} 
       />
     </div>
   );
