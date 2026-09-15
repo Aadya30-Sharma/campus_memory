@@ -8,11 +8,12 @@ import FuturePathModal from "./FuturePathModal";
 import SkillGapModal from "./SkillGapModal";
 import PeerMatchModal from "./PeerMatchModal";
 import GradePredictorModal from "./GradePredictorModal";
+import OfficeHoursModal from "./OfficeHoursModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, Compass, MapPin, BookOpen, ShieldCheck, 
-  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator 
+  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator, GraduationCap 
 } from "lucide-react";
 
 import { CAMPUS_ACTIVITIES } from "./data/campus-mock";
@@ -30,6 +31,7 @@ export default function CampusOS() {
   const [isSkillGapOpen, setIsSkillGapOpen] = useState(false);
   const [isPeerMatchOpen, setIsPeerMatchOpen] = useState(false);
   const [isGradePredictorOpen, setIsGradePredictorOpen] = useState(false);
+  const [isOfficeHoursOpen, setIsOfficeHoursOpen] = useState(false);
 
   // 1. All State Management
   const [selectedYear, setSelectedYear] = useState<Year>(1);
@@ -108,7 +110,7 @@ export default function CampusOS() {
               CAMPUS MEMORY
             </span>
             <span className="text-[10px] text-slate-500 ml-2 border border-white/10 px-1.5 py-0.5 rounded-full">
-              OS v2.7
+              OS v2.8
             </span>
           </div>
         </div>
@@ -137,6 +139,15 @@ export default function CampusOS() {
 
         {/* Right Nav Actions */}
         <div className="flex items-center gap-2">
+          {/* Office Hours Button */}
+          <button 
+            onClick={() => setIsOfficeHoursOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Office Hours</span>
+          </button>
+
           {/* Grade Predictor Button */}
           <button 
             onClick={() => setIsGradePredictorOpen(true)}
@@ -472,6 +483,10 @@ export default function CampusOS() {
       <GradePredictorModal 
         isOpen={isGradePredictorOpen} 
         onClose={() => setIsGradePredictorOpen(false)} 
+      />
+      <OfficeHoursModal 
+        isOpen={isOfficeHoursOpen} 
+        onClose={() => setIsOfficeHoursOpen(false)} 
       />
     </div>
   );
