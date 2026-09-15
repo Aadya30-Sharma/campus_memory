@@ -1,1 +1,68 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  name          String
+  currentYear   Int          @default(1) // 1, 2, 3, or 4
+  techScore     Int          @default(45)
+  leadershipScore Int        @default(20)
+  researchScore Int          @default(15)
+  creativeScore Int          @default(60)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  activities    Activity[]
+  whispers      Whisper[]
+  focusSessions FocusSession[]
+}
+
+model Activity {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  year        Int      // Year 1, 2, 3, or 4
+  title       String
+  description String
+  status      String   @default("verified") // 'verified' | 'pending'
+  date        String   @default("Just now")
+  createdAt   DateTime @default(now())
+}
+
+model StudyRoom {
+  id          String         @id @default(uuid())
+  name        String
+  location    String
+  occupancy   Int            // Percentage 0-100
+  noiseLevel  String         // 'Silent' | 'Moderate' | 'Collaborative'
+  amenities   String[]       // Array of strings e.g. ["AC", "Power Outlets"]
+  sessions    FocusSession[]
+}
+
+model FocusSession {
+  id          String     @id @default(uuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roomId      String?
+  room        StudyRoom? @relation(fields: [roomId], references: [id])
+  durationSec Int        // e.g. 1500 for 25 mins
+  completed   Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+}
+
+model Whisper {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  category  String   @default("General") // 'Academic' | 'Confession' | 'Meme'
+  upvotes   Int      @default(0)
+  createdAt DateTime @default(now())
+}
