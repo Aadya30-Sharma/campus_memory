@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     }
 
     const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
+      model: "gemini-3.8-flash",
       contents: [
         {
           role: "user",
@@ -28,7 +28,10 @@ export async function POST(req: Request) {
     const reply = response.text || "I'm not sure about that, check the Campus Pulse!";
     return NextResponse.json({ reply });
   } catch (error) {
-    console.error("AI Error:", error);
-    return NextResponse.json({ reply: "Oops! My campus connection dropped. Try again." }, { status: 500 });
-  }
+  console.error("AI Error:", error);
+  // Fallback response if Gemini experiences high demand
+  return NextResponse.json({ 
+    reply: "Campus Copilot is experiencing high traffic right now! Try asking again in a moment, or check your active timeline." 
+  });
+}
 }
