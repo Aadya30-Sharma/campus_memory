@@ -15,11 +15,12 @@ import SerendipityModal from "./SerendipityModal";
 import LifecycleModal from "./LifecycleModal";
 import PersonalizationModal from "./PersonalizationModal";
 import WhisperModal from "./WhisperModal";
+import FocusSpaceModal from "./FocusSpaceModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, Compass, MapPin, BookOpen, ShieldCheck, 
-  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator, GraduationCap, Briefcase, Shuffle, Clock, Sliders, MessageSquareQuote 
+  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator, GraduationCap, Briefcase, Shuffle, Clock, Sliders, MessageSquareQuote, Timer 
 } from "lucide-react";
 
 import { CAMPUS_ACTIVITIES } from "./data/campus-mock";
@@ -44,6 +45,7 @@ export default function CampusOS() {
   const [isLifecycleOpen, setIsLifecycleOpen] = useState(false);
   const [isPersonalizationOpen, setIsPersonalizationOpen] = useState(false);
   const [isWhisperOpen, setIsWhisperOpen] = useState(false);
+  const [isFocusSpaceOpen, setIsFocusSpaceOpen] = useState(false);
 
   // 1. All State Management
   const [selectedYear, setSelectedYear] = useState<Year>(1);
@@ -122,7 +124,7 @@ export default function CampusOS() {
               CAMPUS MEMORY
             </span>
             <span className="text-[10px] text-slate-500 ml-2 border border-white/10 px-1.5 py-0.5 rounded-full">
-              OS v2.12
+              OS v2.13
             </span>
           </div>
         </div>
@@ -151,6 +153,15 @@ export default function CampusOS() {
 
         {/* Right Nav Actions */}
         <div className="flex items-center gap-2 overflow-x-auto py-1">
+          {/* Focus Space Button */}
+          <button 
+            onClick={() => setIsFocusSpaceOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-emerald-500/30 text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
+          >
+            <Timer className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Focus Space</span>
+          </button>
+
           {/* Whisper Wall Button */}
           <button 
             onClick={() => setIsWhisperOpen(true)}
@@ -577,6 +588,10 @@ export default function CampusOS() {
       <WhisperModal 
         isOpen={isWhisperOpen} 
         onClose={() => setIsWhisperOpen(false)} 
+      />
+      <FocusSpaceModal 
+        isOpen={isFocusSpaceOpen} 
+        onClose={() => setIsFocusSpaceOpen(false)} 
       />
     </div>
   );
