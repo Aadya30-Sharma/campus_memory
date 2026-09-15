@@ -1,6 +1,6 @@
 # ⚡ Campus Memory OS
 
-> An anti-boring digital memory box and retro-OS dashboard for the chaotic first-year campus experience. 
+> An anti-boring digital memory box and retro-OS dashboard for the chaotic four year campus experience. 
 
 Built for the Vibeathon. 
 
