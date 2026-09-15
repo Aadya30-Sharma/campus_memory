@@ -6,11 +6,12 @@ import CatchMeUpModal from "./CatchMeUpModal";
 import ResumeBuilderModal from "./ResumeBuilderModal";
 import FuturePathModal from "./FuturePathModal";
 import SkillGapModal from "./SkillGapModal";
+import PeerMatchModal from "./PeerMatchModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, Compass, MapPin, BookOpen, ShieldCheck, 
-  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target 
+  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users 
 } from "lucide-react";
 
 import { CAMPUS_ACTIVITIES } from "./data/campus-mock";
@@ -26,6 +27,7 @@ export default function CampusOS() {
   const [isResumeOpen, setIsResumeOpen] = useState(false);
   const [isFuturePathOpen, setIsFuturePathOpen] = useState(false);
   const [isSkillGapOpen, setIsSkillGapOpen] = useState(false);
+  const [isPeerMatchOpen, setIsPeerMatchOpen] = useState(false);
 
   // 1. All State Management
   const [selectedYear, setSelectedYear] = useState<Year>(1);
@@ -104,7 +106,7 @@ export default function CampusOS() {
               CAMPUS MEMORY
             </span>
             <span className="text-[10px] text-slate-500 ml-2 border border-white/10 px-1.5 py-0.5 rounded-full">
-              OS v2.5
+              OS v2.6
             </span>
           </div>
         </div>
@@ -133,6 +135,15 @@ export default function CampusOS() {
 
         {/* Right Nav Actions */}
         <div className="flex items-center gap-2">
+          {/* Peer Match Button */}
+          <button 
+            onClick={() => setIsPeerMatchOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <Users className="w-3.5 h-3.5 text-purple-400" />
+            <span>Peer Match</span>
+          </button>
+
           {/* Skill Gap Button */}
           <button 
             onClick={() => setIsSkillGapOpen(true)}
@@ -442,6 +453,10 @@ export default function CampusOS() {
         isOpen={isSkillGapOpen} 
         onClose={() => setIsSkillGapOpen(false)} 
         activities={activities}
+      />
+      <PeerMatchModal 
+        isOpen={isPeerMatchOpen} 
+        onClose={() => setIsPeerMatchOpen(false)} 
       />
     </div>
   );
