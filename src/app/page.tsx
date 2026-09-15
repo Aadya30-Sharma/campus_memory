@@ -1,6 +1,7 @@
 "use client";
 
 import CampusGraphModal from "./CampusGraphModal";
+import InfoChangeModal from "./InfoChangeModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
@@ -16,36 +17,44 @@ type Year = 1 | 2 | 3 | 4;
 
 export default function CampusOS() {
   const [isGraphOpen, setIsGraphOpen] = useState(false);
+  const [isChangeTrackerOpen, setIsChangeTrackerOpen] = useState(false); // 👉 State added here
+
   // 1. All State Management
   const [selectedYear, setSelectedYear] = useState<Year>(1);
   const [copilotInput, setCopilotInput] = useState("");
   const [copilotResponse, setCopilotResponse] = useState<string | null>(null);
+  const [isCopilotLoading, setIsCopilotLoading] = useState(false);
   const [isVaultOpen, setIsVaultOpen] = useState(false);
   const [isPulseOpen, setIsPulseOpen] = useState(false);
   const [activities, setActivities] = useState<any[]>(CAMPUS_ACTIVITIES);
   const [newTitle, setNewTitle] = useState("");
   const [newDesc, setNewDesc] = useState("");
+
   const handleCopilotSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!copilotInput.trim()) return;
+    e.preventDefault();
+    if (!copilotInput.trim()) return;
 
-  const userQuery = copilotInput;
-  setCopilotInput("");
-  setCopilotResponse("Thinking through the campus network...");
+    const userQuery = copilotInput;
+    setCopilotInput("");
+    setCopilotResponse(null);
+    setIsCopilotLoading(true);
 
-  try {
-    const res = await fetch("/api/copilot", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: userQuery }),
-    });
-    const data = await res.json();
-    setCopilotResponse(data.reply);
-  } catch (err) {
-    setCopilotResponse("Failed to reach the AI brain.");
-  }
-};
-const handleAddMemory = (e: React.FormEvent) => {
+    try {
+      const res = await fetch("/api/copilot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: userQuery }),
+      });
+      const data = await res.json();
+      setCopilotResponse(data.reply);
+    } catch (err) {
+      setCopilotResponse("Failed to reach the AI brain.");
+    } finally {
+      setIsCopilotLoading(false);
+    }
+  };
+
+  const handleAddMemory = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
 
@@ -63,7 +72,6 @@ const handleAddMemory = (e: React.FormEvent) => {
     setNewDesc("");
   };
 
-  // 2. Dynamic Data
   const currentActivities = activities.filter((a) => a.year === selectedYear);
 
   const dnaStats = {
@@ -73,7 +81,6 @@ const handleAddMemory = (e: React.FormEvent) => {
     4: { tech: 94, leadership: 78, research: 65, creative: 50 },
   }[selectedYear];
 
-  // 4. The UI
   return (
     <div className="min-h-screen bg-campus-dark text-slate-100 selection:bg-indigo-500/30 font-sans relative overflow-x-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-radial-glow pointer-events-none -z-10" />
@@ -116,14 +123,26 @@ const handleAddMemory = (e: React.FormEvent) => {
           ))}
         </div>
 
-        {/* Launch Vault Button */}
-        <button 
-          onClick={() => setIsVaultOpen(true)}
-          className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer"
-        >
-          <History className="w-3.5 h-3.5" />
-          <span>Launch 90s Vault</span>
-        </button>
+        {/* Right Nav Actions */}
+        <div className="flex items-center gap-2">
+          {/* 👉 Notice Shifts Button */}
+          <button 
+            onClick={() => setIsChangeTrackerOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-amber-500/30 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span>Notice Shifts</span>
+          </button>
+
+          {/* Launch Vault Button */}
+          <button 
+            onClick={() => setIsVaultOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <History className="w-3.5 h-3.5" />
+            <span>Launch 90s Vault</span>
+          </button>
+        </div>
       </header>
 
       {/* Main Workspace */}
@@ -197,29 +216,29 @@ const handleAddMemory = (e: React.FormEvent) => {
               <span className="text-xs text-slate-500">{currentActivities.length} memories logged</span>
             </div>
             <form onSubmit={handleAddMemory} className="p-3 rounded-xl border border-campus-border bg-campus-card/50 space-y-2 mb-4">
-  <input
-    type="text"
-    value={newTitle}
-    onChange={(e) => setNewTitle(e.target.value)}
-    placeholder="Log a new hackathon, project, or milestone..."
-    className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-  />
-  <div className="flex gap-2">
-    <input
-      type="text"
-      value={newDesc}
-      onChange={(e) => setNewDesc(e.target.value)}
-      placeholder="Short description..."
-      className="flex-1 bg-neutral-900 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-    />
-    <button
-      type="submit"
-      className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer"
-    >
-      Add
-    </button>
-  </div>
-</form>
+              <input
+                type="text"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                placeholder="Log a new hackathon, project, or milestone..."
+                className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newDesc}
+                  onChange={(e) => setNewDesc(e.target.value)}
+                  placeholder="Short description..."
+                  className="flex-1 bg-neutral-900 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                />
+                <button
+                  type="submit"
+                  className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer"
+                >
+                  Add
+                </button>
+              </div>
+            </form>
             <div className="space-y-3">
               {currentActivities.map((act) => (
                 <div 
@@ -285,7 +304,6 @@ const handleAddMemory = (e: React.FormEvent) => {
               {selectedYear === 3 && "Complete STAR bullet points for internship drives."}
               {selectedYear === 4 && "Review capstone documentation & export master portfolio."}
             </p>
-            {/* PASTE THIS BUTTON RIGHT HERE */}
             <button 
               onClick={() => setIsGraphOpen(true)}
               className="w-full mt-4 p-3 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center justify-between group cursor-pointer"
@@ -336,6 +354,14 @@ const handleAddMemory = (e: React.FormEvent) => {
             <Send className="w-3.5 h-3.5" />
           </button>
         </form>
+        {isCopilotLoading && (
+          <div className="flex items-center space-x-2 text-xs text-indigo-400 animate-pulse py-2 px-1">
+            <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+            <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+            <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"></div>
+            <span>Campus Copilot is thinking...</span>
+          </div>
+        )}
       </footer>
 
       {/* Modals */}
@@ -350,6 +376,11 @@ const handleAddMemory = (e: React.FormEvent) => {
       <CampusGraphModal 
         isOpen={isGraphOpen} 
         onClose={() => setIsGraphOpen(false)} 
+      />
+      {/* 👉 Change Tracker Modal Rendered Here */}
+      <InfoChangeModal 
+        isOpen={isChangeTrackerOpen} 
+        onClose={() => setIsChangeTrackerOpen(false)} 
       />
     </div>
   );
