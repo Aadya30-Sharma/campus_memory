@@ -4,6 +4,7 @@ import CampusGraphModal from "./CampusGraphModal";
 import InfoChangeModal from "./InfoChangeModal";
 import CatchMeUpModal from "./CatchMeUpModal";
 import ResumeBuilderModal from "./ResumeBuilderModal";
+import FuturePathModal from "./FuturePathModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
@@ -22,6 +23,7 @@ export default function CampusOS() {
   const [isChangeTrackerOpen, setIsChangeTrackerOpen] = useState(false);
   const [isCatchMeUpOpen, setIsCatchMeUpOpen] = useState(false);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
+  const [isFuturePathOpen, setIsFuturePathOpen] = useState(false);
 
   // 1. All State Management
   const [selectedYear, setSelectedYear] = useState<Year>(1);
@@ -129,6 +131,15 @@ export default function CampusOS() {
 
         {/* Right Nav Actions */}
         <div className="flex items-center gap-2">
+          {/* Future Path Button */}
+          <button 
+            onClick={() => setIsFuturePathOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <Compass className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Future Path</span>
+          </button>
+
           {/* Resume Builder Button */}
           <button 
             onClick={() => setIsResumeOpen(true)}
@@ -411,6 +422,10 @@ export default function CampusOS() {
         isOpen={isResumeOpen} 
         onClose={() => setIsResumeOpen(false)} 
         activities={activities}
+      />
+      <FuturePathModal 
+        isOpen={isFuturePathOpen} 
+        onClose={() => setIsFuturePathOpen(false)} 
       />
     </div>
   );
