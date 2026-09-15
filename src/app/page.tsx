@@ -10,7 +10,6 @@ import PeerMatchModal from "./PeerMatchModal";
 import GradePredictorModal from "./GradePredictorModal";
 import OfficeHoursModal from "./OfficeHoursModal";
 import AlumniNetworkModal from "./AlumniNetworkModal";
-import ExplainNoticeModal from "./ExplainNoticeModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
