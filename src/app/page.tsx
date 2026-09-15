@@ -3,11 +3,12 @@
 import CampusGraphModal from "./CampusGraphModal";
 import InfoChangeModal from "./InfoChangeModal";
 import CatchMeUpModal from "./CatchMeUpModal";
+import ResumeBuilderModal from "./ResumeBuilderModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, Compass, MapPin, BookOpen, ShieldCheck, 
-  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap 
+  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText 
 } from "lucide-react";
 
 import { CAMPUS_ACTIVITIES } from "./data/campus-mock";
@@ -20,6 +21,7 @@ export default function CampusOS() {
   const [isGraphOpen, setIsGraphOpen] = useState(false);
   const [isChangeTrackerOpen, setIsChangeTrackerOpen] = useState(false);
   const [isCatchMeUpOpen, setIsCatchMeUpOpen] = useState(false);
+  const [isResumeOpen, setIsResumeOpen] = useState(false);
 
   // 1. All State Management
   const [selectedYear, setSelectedYear] = useState<Year>(1);
@@ -127,6 +129,15 @@ export default function CampusOS() {
 
         {/* Right Nav Actions */}
         <div className="flex items-center gap-2">
+          {/* Resume Builder Button */}
+          <button 
+            onClick={() => setIsResumeOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <FileText className="w-3.5 h-3.5 text-purple-400" />
+            <span>Resume Builder</span>
+          </button>
+
           {/* Catch Me Up Button */}
           <button 
             onClick={() => setIsCatchMeUpOpen(true)}
@@ -395,6 +406,11 @@ export default function CampusOS() {
       <CatchMeUpModal 
         isOpen={isCatchMeUpOpen} 
         onClose={() => setIsCatchMeUpOpen(false)} 
+      />
+      <ResumeBuilderModal 
+        isOpen={isResumeOpen} 
+        onClose={() => setIsResumeOpen(false)} 
+        activities={activities}
       />
     </div>
   );
