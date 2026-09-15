@@ -7,11 +7,12 @@ import ResumeBuilderModal from "./ResumeBuilderModal";
 import FuturePathModal from "./FuturePathModal";
 import SkillGapModal from "./SkillGapModal";
 import PeerMatchModal from "./PeerMatchModal";
+import GradePredictorModal from "./GradePredictorModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, Compass, MapPin, BookOpen, ShieldCheck, 
-  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users 
+  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator 
 } from "lucide-react";
 
 import { CAMPUS_ACTIVITIES } from "./data/campus-mock";
@@ -28,6 +29,7 @@ export default function CampusOS() {
   const [isFuturePathOpen, setIsFuturePathOpen] = useState(false);
   const [isSkillGapOpen, setIsSkillGapOpen] = useState(false);
   const [isPeerMatchOpen, setIsPeerMatchOpen] = useState(false);
+  const [isGradePredictorOpen, setIsGradePredictorOpen] = useState(false);
 
   // 1. All State Management
   const [selectedYear, setSelectedYear] = useState<Year>(1);
@@ -106,7 +108,7 @@ export default function CampusOS() {
               CAMPUS MEMORY
             </span>
             <span className="text-[10px] text-slate-500 ml-2 border border-white/10 px-1.5 py-0.5 rounded-full">
-              OS v2.6
+              OS v2.7
             </span>
           </div>
         </div>
@@ -135,6 +137,15 @@ export default function CampusOS() {
 
         {/* Right Nav Actions */}
         <div className="flex items-center gap-2">
+          {/* Grade Predictor Button */}
+          <button 
+            onClick={() => setIsGradePredictorOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-amber-500/30 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <Calculator className="w-3.5 h-3.5 text-amber-400" />
+            <span>Grade Predictor</span>
+          </button>
+
           {/* Peer Match Button */}
           <button 
             onClick={() => setIsPeerMatchOpen(true)}
@@ -457,6 +468,10 @@ export default function CampusOS() {
       <PeerMatchModal 
         isOpen={isPeerMatchOpen} 
         onClose={() => setIsPeerMatchOpen(false)} 
+      />
+      <GradePredictorModal 
+        isOpen={isGradePredictorOpen} 
+        onClose={() => setIsGradePredictorOpen(false)} 
       />
     </div>
   );
