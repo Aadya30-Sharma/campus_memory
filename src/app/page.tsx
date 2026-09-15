@@ -2,11 +2,12 @@
 
 import CampusGraphModal from "./CampusGraphModal";
 import InfoChangeModal from "./InfoChangeModal";
+import CatchMeUpModal from "./CatchMeUpModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, Compass, MapPin, BookOpen, ShieldCheck, 
-  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network 
+  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap 
 } from "lucide-react";
 
 import { CAMPUS_ACTIVITIES } from "./data/campus-mock";
@@ -17,7 +18,8 @@ type Year = 1 | 2 | 3 | 4;
 
 export default function CampusOS() {
   const [isGraphOpen, setIsGraphOpen] = useState(false);
-  const [isChangeTrackerOpen, setIsChangeTrackerOpen] = useState(false); // 👉 State added here
+  const [isChangeTrackerOpen, setIsChangeTrackerOpen] = useState(false);
+  const [isCatchMeUpOpen, setIsCatchMeUpOpen] = useState(false);
 
   // 1. All State Management
   const [selectedYear, setSelectedYear] = useState<Year>(1);
@@ -125,7 +127,16 @@ export default function CampusOS() {
 
         {/* Right Nav Actions */}
         <div className="flex items-center gap-2">
-          {/* 👉 Notice Shifts Button */}
+          {/* Catch Me Up Button */}
+          <button 
+            onClick={() => setIsCatchMeUpOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <span>Catch Me Up</span>
+          </button>
+
+          {/* Notice Shifts Button */}
           <button 
             onClick={() => setIsChangeTrackerOpen(true)}
             className="text-xs px-3 py-1.5 rounded-lg border border-amber-500/30 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 transition flex items-center gap-1.5 cursor-pointer"
@@ -377,10 +388,13 @@ export default function CampusOS() {
         isOpen={isGraphOpen} 
         onClose={() => setIsGraphOpen(false)} 
       />
-      {/* 👉 Change Tracker Modal Rendered Here */}
       <InfoChangeModal 
         isOpen={isChangeTrackerOpen} 
         onClose={() => setIsChangeTrackerOpen(false)} 
+      />
+      <CatchMeUpModal 
+        isOpen={isCatchMeUpOpen} 
+        onClose={() => setIsCatchMeUpOpen(false)} 
       />
     </div>
   );
