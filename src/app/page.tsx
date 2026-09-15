@@ -11,11 +11,12 @@ import GradePredictorModal from "./GradePredictorModal";
 import OfficeHoursModal from "./OfficeHoursModal";
 import AlumniNetworkModal from "./AlumniNetworkModal";
 import ExplainNoticeModal from "./ExplainNoticeModal";
+import SerendipityModal from "./SerendipityModal";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, Compass, MapPin, BookOpen, ShieldCheck, 
-  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator, GraduationCap, Briefcase 
+  Flame, HelpCircle, ArrowUpRight, Award, History, Send, Network, Zap, FileText, Target, Users, Calculator, GraduationCap, Briefcase, Shuffle 
 } from "lucide-react";
 
 import { CAMPUS_ACTIVITIES } from "./data/campus-mock";
@@ -36,6 +37,7 @@ export default function CampusOS() {
   const [isOfficeHoursOpen, setIsOfficeHoursOpen] = useState(false);
   const [isAlumniModalOpen, setIsAlumniModalOpen] = useState(false);
   const [isExplainModalOpen, setIsExplainModalOpen] = useState(false);
+  const [isSerendipityOpen, setIsSerendipityOpen] = useState(false);
 
   // 1. All State Management
   const [selectedYear, setSelectedYear] = useState<Year>(1);
@@ -142,20 +144,29 @@ export default function CampusOS() {
         </div>
 
         {/* Right Nav Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto py-1">
           {/* Explain Notice Button */}
           <button 
             onClick={() => setIsExplainModalOpen(true)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <FileText className="w-3.5 h-3.5 text-indigo-400" />
             <span>Explain Notice</span>
           </button>
 
+          {/* Serendipity Button */}
+          <button 
+            onClick={() => setIsSerendipityOpen(true)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-pink-500/30 text-pink-300 bg-pink-500/10 hover:bg-pink-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
+          >
+            <Shuffle className="w-3.5 h-3.5 text-pink-400" />
+            <span>Serendipity</span>
+          </button>
+
           {/* Alumni Radar Button */}
           <button 
             onClick={() => setIsAlumniModalOpen(true)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <Briefcase className="w-3.5 h-3.5 text-purple-400" />
             <span>Alumni Radar</span>
@@ -164,7 +175,7 @@ export default function CampusOS() {
           {/* Office Hours Button */}
           <button 
             onClick={() => setIsOfficeHoursOpen(true)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
             <span>Office Hours</span>
@@ -173,7 +184,7 @@ export default function CampusOS() {
           {/* Grade Predictor Button */}
           <button 
             onClick={() => setIsGradePredictorOpen(true)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-amber-500/30 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg border border-amber-500/30 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <Calculator className="w-3.5 h-3.5 text-amber-400" />
             <span>Grade Predictor</span>
@@ -182,7 +193,7 @@ export default function CampusOS() {
           {/* Peer Match Button */}
           <button 
             onClick={() => setIsPeerMatchOpen(true)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <Users className="w-3.5 h-3.5 text-purple-400" />
             <span>Peer Match</span>
@@ -191,7 +202,7 @@ export default function CampusOS() {
           {/* Skill Gap Button */}
           <button 
             onClick={() => setIsSkillGapOpen(true)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-emerald-500/30 text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg border border-emerald-500/30 text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <Target className="w-3.5 h-3.5 text-emerald-400" />
             <span>Skill Gap</span>
@@ -200,7 +211,7 @@ export default function CampusOS() {
           {/* Future Path Button */}
           <button 
             onClick={() => setIsFuturePathOpen(true)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <Compass className="w-3.5 h-3.5 text-indigo-400" />
             <span>Future Path</span>
@@ -209,7 +220,7 @@ export default function CampusOS() {
           {/* Resume Builder Button */}
           <button 
             onClick={() => setIsResumeOpen(true)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <FileText className="w-3.5 h-3.5 text-purple-400" />
             <span>Resume Builder</span>
@@ -218,7 +229,7 @@ export default function CampusOS() {
           {/* Catch Me Up Button */}
           <button 
             onClick={() => setIsCatchMeUpOpen(true)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/30 text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <Zap className="w-3.5 h-3.5 text-amber-400" />
             <span>Catch Me Up</span>
@@ -227,7 +238,7 @@ export default function CampusOS() {
           {/* Notice Shifts Button */}
           <button 
             onClick={() => setIsChangeTrackerOpen(true)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-amber-500/30 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg border border-amber-500/30 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
             <span>Notice Shifts</span>
@@ -236,7 +247,7 @@ export default function CampusOS() {
           {/* Launch Vault Button */}
           <button 
             onClick={() => setIsVaultOpen(true)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <History className="w-3.5 h-3.5" />
             <span>Launch 90s Vault</span>
@@ -517,6 +528,10 @@ export default function CampusOS() {
       <ExplainNoticeModal 
         isOpen={isExplainModalOpen} 
         onClose={() => setIsExplainModalOpen(false)} 
+      />
+      <SerendipityModal 
+        isOpen={isSerendipityOpen} 
+        onClose={() => setIsSerendipityOpen(false)} 
       />
     </div>
   );
