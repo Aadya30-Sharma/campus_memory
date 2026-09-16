@@ -1,4 +1,7 @@
 "use client";
+import { supabase } from "@/lib/supabaseClient";
+import AuthModal from "./AuthModal";
+import { useEffect } from "react";
 
 import CampusGraphModal from "./CampusGraphModal";
 import InfoChangeModal from "./InfoChangeModal";
@@ -67,6 +70,47 @@ export default function CampusOS() {
   const [isPersonalizationOpen, setIsPersonalizationOpen] = useState(false);
   const [isWhisperOpen, setIsWhisperOpen] = useState(false);
   const [isFocusSpaceOpen, setIsFocusSpaceOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  useEffect(() => {
+    // 1. Check existing session on load
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setCurrentUser(session.user);
+        loadUserActivities(session.user.id);
+      }
+    });
+
+    // 2. Listen to real-time auth changes
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        const user = session?.user ?? null;
+        setCurrentUser(user);
+        if (user) {
+          loadUserActivities(user.id);
+        } else {
+          setActivities(CAMPUS_ACTIVITIES);
+        }
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const loadUserActivities = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("user_activities")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (!error && data && data.length > 0) {
+      setActivities(data);
+    }
+  };
 
   // 1. All State Management
   // Living Campus Geolocation State
@@ -146,24 +190,39 @@ const [academicItems, setAcademicItems] = useState([
     }
   };
 
-  const handleAddMemory = (e: React.FormEvent) => {
+  const handleAddMemory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
 
-    const newMemory = {
-      id: Date.now(),
+    if (!currentUser) {
+      alert("Please log in to save activities to your account.");
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    const newEntry = {
+      user_id: currentUser.id,
       year: selectedYear,
       title: newTitle,
       description: newDesc || "Custom user-logged entry into Campus OS.",
+      status: "verified",
       date: "Just now",
-      status: "verified" as const,
+      category: "Tech",
     };
 
-    setActivities([newMemory, ...activities]);
-    setNewTitle("");
-    setNewDesc("");
-  };
+    const { data, error } = await supabase
+      .from("user_activities")
+      .insert([newEntry])
+      .select();
 
+    if (!error && data) {
+      setActivities([data[0], ...activities]);
+      setNewTitle("");
+      setNewDesc("");
+    } else if (error) {
+      alert(error.message);
+    }
+  };
   const currentActivities = activities.filter((a) => a.year === selectedYear);
 
   const dnaStats = {
@@ -217,6 +276,21 @@ const [academicItems, setAcademicItems] = useState([
 
         {/* Right Nav Actions */}
         <div className="flex items-center gap-2 overflow-x-auto py-1">
+          {currentUser ? (
+            <button
+              onClick={() => supabase.auth.signOut()}
+              className="text-xs px-3 py-1.5 rounded-lg border border-rose-500/30 text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 transition cursor-pointer shrink-0"
+            >
+              Sign Out ({currentUser.email?.split("@")[0]})
+            </button>
+          ) : (
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="text-xs px-3 py-1.5 rounded-lg border border-indigo-500/40 text-white bg-indigo-600 hover:bg-indigo-500 transition cursor-pointer shrink-0"
+            >
+              Sign In / Register
+            </button>
+          )}
           {/* Focus Space Button */}
           <button 
             onClick={() => setIsFocusSpaceOpen(true)}
@@ -703,6 +777,10 @@ const [academicItems, setAcademicItems] = useState([
       <FocusSpaceModal 
         isOpen={isFocusSpaceOpen} 
         onClose={() => setIsFocusSpaceOpen(false)} 
+      />
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
       />
     </div>
   );
