@@ -107,7 +107,6 @@ const [blockDistances, setBlockDistances] = useState<any[]>([]);
       { enableHighAccuracy: true }
     );
   };
-
   const [selectedYear, setSelectedYear] = useState<Year>(1);
   const [copilotInput, setCopilotInput] = useState("");
   const [copilotResponse, setCopilotResponse] = useState<string | null>(null);
@@ -117,37 +116,12 @@ const [blockDistances, setBlockDistances] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>(CAMPUS_ACTIVITIES);
   const [newTitle, setNewTitle] = useState("");
   const [newDesc, setNewDesc] = useState("");
-
-    // ---> PASTE ACADEMIC STATE & HANDLERS HERE <---
-    const [academicItems, setAcademicItems] = useState([
-      { id: 1, title: "Data Structures (CS201)", status: "Due Tomorrow", statusColor: "text-amber-400 bg-amber-400/10" },
-      { id: 2, title: "Pointers & Memory Slides", status: "Indexed", statusColor: "text-slate-400 bg-white/5" },
-    ]);
-    const [newClassTitle, setNewClassTitle] = useState("");
-    const [newClassStatus, setNewClassStatus] = useState("Due Soon");
-
-    const handleAddAcademicItem = (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!newClassTitle.trim()) return;
-      
-      const newItem = {
-        id: Date.now(),
-        title: newClassTitle,
-        status: newClassStatus,
-        statusColor: newClassStatus.toLowerCase().includes("due") ? "text-amber-400 bg-amber-400/10" : "text-indigo-300 bg-indigo-500/10"
-      };
-
-      setAcademicItems([newItem, ...academicItems]);
-      setNewClassTitle("");
-    };
-
-    const handleRemoveAcademicItem = (id: number) => {
-      setAcademicItems(academicItems.filter(item => item.id !== id));
-    };
-
-    const handleCopilotSubmit = async (e: React.FormEvent) => {
-      // ... your existing code below ...
-
+const [academicItems, setAcademicItems] = useState([
+    { id: 1, title: "Data Structures (CS201)", status: "Due Tomorrow", statusColor: "text-amber-400 bg-amber-400/10" },
+    { id: 2, title: "Pointers & Memory Slides", status: "Indexed", statusColor: "text-slate-400 bg-neutral-800" },
+    { id: 3, title: "OS Process Scheduling Blueprint", status: "Unit 2", statusColor: "text-indigo-400 bg-indigo-500/10" },
+  ]);
+  const [academicSearch, setAcademicSearch] = useState("");
   const handleCopilotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!copilotInput.trim()) return;
@@ -394,110 +368,83 @@ const [blockDistances, setBlockDistances] = useState<any[]>([]);
         
         {/* Left Column */}
         <aside className="lg:col-span-3 space-y-6">
-          <div className="p-4 rounded-2xl border border-campus-border bg-campus-card backdrop-blur-md space-y-3">
-  <div className="flex items-center justify-between">
-    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-      <MapPin className="w-3.5 h-3.5 text-indigo-400" /> Living Campus (IGDTUW)
-    </span>
-    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-  </div>
+        <div className="p-4 rounded-2xl border border-campus-border bg-campus-card backdrop-blur-md">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-indigo-400" /> Living Campus
+              </span>
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+            </div>
 
-  <div className="rounded-xl bg-neutral-900/80 border border-white/5 p-3 space-y-2 max-h-48 overflow-y-auto">
-    <p className="text-xs font-medium text-white">{locationText}</p>
-    <p className="text-[11px] text-slate-400">{locationSubtext}</p>
-    
-    {blockDistances.length > 0 ? (
-      <div className="space-y-1.5 pt-2 border-t border-white/10">
-        <p className="text-[10px] text-indigo-300 font-semibold uppercase tracking-wider">Distances to Blocks:</p>
-        {blockDistances.map(b => (
-          <div key={b.id} className="flex justify-between text-[11px] bg-white/5 p-1.5 rounded">
-            <span className="text-slate-200">{b.name}</span>
-            <span className="text-indigo-400 font-mono">{b.distance}m away</span>
+            <div className="h-32 rounded-xl bg-neutral-900/80 border border-white/5 relative overflow-hidden flex flex-col justify-end p-3">
+              <div className="absolute inset-0 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:12px_12px] opacity-20" />
+              <p className="text-xs font-medium text-white relative z-10">{locationText}</p>
+              <p className="text-[11px] text-slate-400 relative z-10">{locationSubtext}</p>
+            </div>
+
+            <button 
+              onClick={handleFetchLocation}
+              disabled={isLocating}
+              className="w-full mt-3 text-[11px] text-indigo-300 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/15 transition border border-indigo-500/20 cursor-pointer disabled:opacity-50"
+            >
+              {isLocating ? "Detecting Precise GPS..." : "Take me somewhere useful"}
+            </button>
+
+            {blockDistances && blockDistances.length > 0 && (
+              <div className="mt-3 space-y-1.5 max-h-44 overflow-y-auto pr-1">
+                {blockDistances
+                  .slice()
+                  .sort((a, b) => a.distance - b.distance)
+                  .map((b) => (
+                    <div
+                      key={b.id}
+                      className="p-2 rounded-lg bg-neutral-900/60 border border-white/5 flex items-center justify-between text-xs"
+                    >
+                      <div className="truncate mr-2">
+                        <p className="text-slate-200 font-medium truncate">{b.name}</p>
+                        <p className="text-[10px] text-slate-500 truncate">{b.desc}</p>
+                      </div>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 shrink-0">
+                        {b.distance < 1000 ? `${b.distance}m` : `${(b.distance / 1000).toFixed(1)}km`}
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            )}
           </div>
-        ))}
-      </div>
-    ) : (
-      <p className="text-[10px] text-slate-500 italic">Click below to compute routes to IGDTUW blocks.</p>
-    )}
-  </div>
-
-  <button 
-    onClick={handleFetchLocation}
-    disabled={isLocating}
-    className="w-full text-[11px] text-indigo-300 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/15 transition border border-indigo-500/20 cursor-pointer disabled:opacity-50"
-  >
-    {isLocating ? "Pinpointing IGDTUW GPS..." : "Find route to campus blocks"}
-  </button>
-</div>
-<div className="p-4 rounded-2xl border border-campus-border bg-campus-card backdrop-blur-md space-y-3">
-  <div className="flex items-center justify-between">
-    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-      <BookOpen className="w-3.5 h-3.5 text-indigo-400" /> Academic Memory
-    </span>
-    <span className="text-[10px] text-indigo-400 font-mono bg-indigo-500/10 px-2 py-0.5 rounded-full">Live Sync</span>
-  </div>
-
-  {/* Dynamic List of Items */}
-  <div className="space-y-2 max-h-44 overflow-y-auto">
-    {academicItems.map((item) => (
-      <div key={item.id} className="flex items-center justify-between p-2.5 rounded-lg bg-neutral-900/80 border border-white/5 group">
-        <span className="text-xs text-slate-200 font-medium truncate max-w-[150px]">{item.title}</span>
-        <div className="flex items-center gap-2">
-          <span className={`text-[10px] px-2 py-0.5 rounded-md ${item.statusColor}`}>{item.status}</span>
-          <button 
-            onClick={() => handleRemoveAcademicItem(item.id)}
-            className="text-slate-500 hover:text-red-400 text-xs opacity-0 group-hover:opacity-100 transition cursor-pointer"
-            title="Remove"
-          >
-            ×
-          </button>
-        </div>
-      </div>
-    ))}
-  </div>
-
-  {/* Form to Add New Class Uploads / Assignments */}
-  <form onSubmit={handleAddAcademicItem} className="space-y-2 pt-2 border-t border-white/10">
-    <input 
-      type="text" 
-      placeholder="Add assignment or notes..." 
-      value={newClassTitle}
-      onChange={(e) => setNewClassTitle(e.target.value)}
-      className="w-full text-xs bg-neutral-900 border border-white/10 rounded-lg px-3 py-1.5 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-    />
-    <div className="flex gap-2">
-      <select 
-        value={newClassStatus}
-        onChange={(e) => setNewClassStatus(e.target.value)}
-        className="text-[11px] bg-neutral-900 border border-white/10 rounded-lg px-2 py-1 text-slate-300 focus:outline-none"
-      >
-        <option value="Due Soon">Due Soon</option>
-        <option value="Indexed">Indexed</option>
-        <option value="New Upload">New Upload</option>
-      </select>
-      <button 
-        type="submit"
-        className="flex-1 text-[11px] text-indigo-300 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 transition border border-indigo-500/30 cursor-pointer font-medium"
-      >
-        + Add to Memory
-      </button>
-    </div>
-  </form>
-</div>
 
           <div className="p-4 rounded-2xl border border-campus-border bg-campus-card backdrop-blur-md">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 mb-3">
-              <BookOpen className="w-3.5 h-3.5 text-indigo-400" /> Academic Memory
-            </span>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <BookOpen className="w-3.5 h-3.5 text-indigo-400" /> Academic Memory
+              </span>
+              <span className="text-[10px] text-slate-500 font-mono">
+                {academicItems.filter(i => i.title.toLowerCase().includes(academicSearch.toLowerCase())).length} indexed
+              </span>
+            </div>
+
+            <input
+              type="text"
+              value={academicSearch}
+              onChange={(e) => setAcademicSearch(e.target.value)}
+              placeholder="Search syllabus, notes, slides..."
+              className="w-full mb-3 bg-neutral-900/80 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500/60"
+            />
+
             <div className="space-y-2 text-xs">
-              <div className="p-2.5 rounded-lg bg-neutral-900/60 border border-white/5 flex justify-between items-center">
-                <span>Data Structures (CS201)</span>
-                <span className="text-[10px] text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded">Due Tomorrow</span>
-              </div>
-              <div className="p-2.5 rounded-lg bg-neutral-900/60 border border-white/5 flex justify-between items-center">
-                <span>Pointers & Memory Slides</span>
-                <span className="text-[10px] text-slate-400">Indexed</span>
-              </div>
+              {academicItems
+                .filter((item) => item.title.toLowerCase().includes(academicSearch.toLowerCase()))
+                .map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-2.5 rounded-lg bg-neutral-900/60 border border-white/5 flex justify-between items-center hover:border-indigo-500/30 transition"
+                  >
+                    <span className="text-slate-200">{item.title}</span>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${item.statusColor}`}>
+                      {item.status}
+                    </span>
+                  </div>
+                ))}
             </div>
           </div>
         </aside>
@@ -759,5 +706,4 @@ const [blockDistances, setBlockDistances] = useState<any[]>([]);
       />
     </div>
   );
-}
 }
