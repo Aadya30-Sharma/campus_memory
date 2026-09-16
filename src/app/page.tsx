@@ -28,6 +28,27 @@ import MemoryVault from "./MemoryVault";
 import CampusPulseModal from "./CampusPulseModal";
 
 type Year = 1 | 2 | 3 | 4;
+// IGDTUW Kashmere Gate Campus Landmarks & Blocks
+const IGDTUW_BLOCKS = [
+  { id: 'admin', name: 'Administrative Block', lat: 28.6645, lng: 77.2322, desc: 'Main office & registrar' },
+  { id: 'it', name: 'IT & CSE Block', lat: 28.6648, lng: 77.2325, desc: 'Computer labs & lecture halls' },
+  { id: 'mech', name: 'Mechanical Block', lat: 28.6642, lng: 77.2320, desc: 'Workshops & labs' },
+  { id: 'lib', name: 'Library (LRC)', lat: 28.6646, lng: 77.2328, desc: 'Learning Resource Centre' },
+  { id: 'hostel', name: 'Hostels (Krishna/Kaveri)', lat: 28.6640, lng: 77.2318, desc: 'Residential zone' },
+];
+
+// Helper to calculate distance in meters (Haversine formula)
+const getDistanceFromLatLonInMeters = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371e3;
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c);
+};
 
 export default function CampusOS() {
   const [isGraphOpen, setIsGraphOpen] = useState(false);
@@ -53,28 +74,39 @@ export default function CampusOS() {
   const [locationSubtext, setLocationSubtext] = useState("AI Society Hack-Meet in 20m");
   const [isLocating, setIsLocating] = useState(false);
 
+const [blockDistances, setBlockDistances] = useState<any[]>([]);
+
   const handleFetchLocation = () => {
-  if (!navigator.geolocation) {
-    alert("Geolocation is not supported by your browser");
-    return;
-  }
-  
-  setIsLocating(true);
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const lat = position.coords.latitude.toFixed(4);
-      const lng = position.coords.longitude.toFixed(4);
-      setLocationText(`GPS Active`);
-      setLocationSubtext(`Lat: ${lat}, Lng: ${lng}`);
-      setIsLocating(false); // This unlocks the button
-    },
-    (error) => {
-      alert("Unable to retrieve your location. Please check browser permissions.");
-      setIsLocating(false); // Unlocks the button on error too
-    },
-    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-  );
-};
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+    
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
+        
+        setLocationText(`IGDTUW GPS Active`);
+        setLocationSubtext(`Lat: ${userLat.toFixed(4)}, Lng: ${userLng.toFixed(4)}`);
+        
+        // Calculate distance to each campus block
+        const evaluatedBlocks = IGDTUW_BLOCKS.map(block => ({
+          ...block,
+          distance: getDistanceFromLatLonInMeters(userLat, userLng, block.lat, block.lng)
+        }));
+        
+        setBlockDistances(evaluatedBlocks);
+        setIsLocating(false);
+      },
+      (error) => {
+        alert("Unable to retrieve your location. Please check browser permissions.");
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: true }
+    );
+  };
   const [selectedYear, setSelectedYear] = useState<Year>(1);
   const [copilotInput, setCopilotInput] = useState("");
   const [copilotResponse, setCopilotResponse] = useState<string | null>(null);
@@ -331,26 +363,41 @@ export default function CampusOS() {
         
         {/* Left Column */}
         <aside className="lg:col-span-3 space-y-6">
-          <div className="p-4 rounded-2xl border border-campus-border bg-campus-card backdrop-blur-md">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-indigo-400" /> Living Campus
-              </span>
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-            </div>
-            <div className="h-36 rounded-xl bg-neutral-900/80 border border-white/5 relative overflow-hidden flex flex-col justify-end p-3">
-              <div className="absolute inset-0 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:12px_12px] opacity-20" />
-              <p className="text-xs font-medium text-white relative z-10">{locationText}</p>
-              <p className="text-[11px] text-slate-400 relative z-10">{locationSubtext}</p>
-            </div>
-            <button 
-              onClick={handleFetchLocation}
-              disabled={isLocating}
-              className="w-full mt-3 text-[11px] text-indigo-300 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/15 transition border border-indigo-500/20 cursor-pointer disabled:opacity-50"
-            >
-              {isLocating ? "Detecting Precise GPS..." : "Take me somewhere useful"}
-            </button>
+          <div className="p-4 rounded-2xl border border-campus-border bg-campus-card backdrop-blur-md space-y-3">
+  <div className="flex items-center justify-between">
+    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+      <MapPin className="w-3.5 h-3.5 text-indigo-400" /> Living Campus (IGDTUW)
+    </span>
+    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+  </div>
+
+  <div className="rounded-xl bg-neutral-900/80 border border-white/5 p-3 space-y-2 max-h-48 overflow-y-auto">
+    <p className="text-xs font-medium text-white">{locationText}</p>
+    <p className="text-[11px] text-slate-400">{locationSubtext}</p>
+    
+    {blockDistances.length > 0 ? (
+      <div className="space-y-1.5 pt-2 border-t border-white/10">
+        <p className="text-[10px] text-indigo-300 font-semibold uppercase tracking-wider">Distances to Blocks:</p>
+        {blockDistances.map(b => (
+          <div key={b.id} className="flex justify-between text-[11px] bg-white/5 p-1.5 rounded">
+            <span className="text-slate-200">{b.name}</span>
+            <span className="text-indigo-400 font-mono">{b.distance}m away</span>
           </div>
+        ))}
+      </div>
+    ) : (
+      <p className="text-[10px] text-slate-500 italic">Click below to compute routes to IGDTUW blocks.</p>
+    )}
+  </div>
+
+  <button 
+    onClick={handleFetchLocation}
+    disabled={isLocating}
+    className="w-full text-[11px] text-indigo-300 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/15 transition border border-indigo-500/20 cursor-pointer disabled:opacity-50"
+  >
+    {isLocating ? "Pinpointing IGDTUW GPS..." : "Find route to campus blocks"}
+  </button>
+</div>
 
           <div className="p-4 rounded-2xl border border-campus-border bg-campus-card backdrop-blur-md">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 mb-3">
