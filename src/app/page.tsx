@@ -48,6 +48,32 @@ export default function CampusOS() {
   const [isFocusSpaceOpen, setIsFocusSpaceOpen] = useState(false);
 
   // 1. All State Management
+  // Living Campus Geolocation State
+  const [locationText, setLocationText] = useState("CS Block • Lab 4");
+  const [locationSubtext, setLocationSubtext] = useState("AI Society Hack-Meet in 20m");
+  const [isLocating, setIsLocating] = useState(false);
+
+  const handleFetchLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+    
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude.toFixed(4);
+        const lng = position.coords.longitude.toFixed(4);
+        setLocationText(`GPS Active`);
+        setLocationSubtext(`Lat: ${lat}, Lng: ${lng}`);
+        setIsLocating(false);
+      },
+      (error) => {
+        alert("Unable to retrieve your location. Please check browser permissions.");
+        setIsLocating(false);
+      }
+    );
+  };
   const [selectedYear, setSelectedYear] = useState<Year>(1);
   const [copilotInput, setCopilotInput] = useState("");
   const [copilotResponse, setCopilotResponse] = useState<string | null>(null);
@@ -313,11 +339,15 @@ export default function CampusOS() {
             </div>
             <div className="h-36 rounded-xl bg-neutral-900/80 border border-white/5 relative overflow-hidden flex flex-col justify-end p-3">
               <div className="absolute inset-0 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:12px_12px] opacity-20" />
-              <p className="text-xs font-medium text-white relative z-10">CS Block • Lab 4</p>
-              <p className="text-[11px] text-slate-400 relative z-10">AI Society Hack-Meet in 20m</p>
+              <p className="text-xs font-medium text-white relative z-10">{locationText}</p>
+              <p className="text-[11px] text-slate-400 relative z-10">{locationSubtext}</p>
             </div>
-            <button className="w-full mt-3 text-[11px] text-indigo-300 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/15 transition border border-indigo-500/20 cursor-pointer">
-              "Take me somewhere useful"
+            <button 
+              onClick={handleFetchLocation}
+              disabled={isLocating}
+              className="w-full mt-3 text-[11px] text-indigo-300 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/15 transition border border-indigo-500/20 cursor-pointer disabled:opacity-50"
+            >
+              {isLocating ? "Detecting Precise GPS..." : "Take me somewhere useful"}
             </button>
           </div>
 
