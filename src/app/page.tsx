@@ -54,26 +54,27 @@ export default function CampusOS() {
   const [isLocating, setIsLocating] = useState(false);
 
   const handleFetchLocation = () => {
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
-      return;
-    }
-    
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude.toFixed(4);
-        const lng = position.coords.longitude.toFixed(4);
-        setLocationText(`GPS Active`);
-        setLocationSubtext(`Lat: ${lat}, Lng: ${lng}`);
-        setIsLocating(false);
-      },
-      (error) => {
-        alert("Unable to retrieve your location. Please check browser permissions.");
-        setIsLocating(false);
-      }
-    );
-  };
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by your browser");
+    return;
+  }
+  
+  setIsLocating(true);
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude.toFixed(4);
+      const lng = position.coords.longitude.toFixed(4);
+      setLocationText(`GPS Active`);
+      setLocationSubtext(`Lat: ${lat}, Lng: ${lng}`);
+      setIsLocating(false); // This unlocks the button
+    },
+    (error) => {
+      alert("Unable to retrieve your location. Please check browser permissions.");
+      setIsLocating(false); // Unlocks the button on error too
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+};
   const [selectedYear, setSelectedYear] = useState<Year>(1);
   const [copilotInput, setCopilotInput] = useState("");
   const [copilotResponse, setCopilotResponse] = useState<string | null>(null);
